@@ -1,20 +1,22 @@
 // server.js
 const express = require('express');
-const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth');
-const { requireAuth } = require('./middlewares/authMiddleware');
-
 // Create an instance of Express
 const app = express();
+
+const mongoose = require('mongoose');
+const authRoutes = require('./routes/authRoutes');
+const chapterRoutes = require('./routes/chapterRoutes');
 
 // Middleware
 app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/chapter', chapterRoutes);
 
 // Connect to MongoDB
-const dbURI = 'mongodb://localhost/tradingAppDB';
+const dbURI = 'mongodb+srv://hemangmonga:Hzqo57CWUqYdCiGv@cluster0.tyicw4j.mongodb.net/?retryWrites=true&w=majority';
+
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
@@ -25,38 +27,3 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
     });
   })
   .catch((err) => console.log(err));
-
-
-// Protected route - require authentication
-app.get('/api/chapters', requireAuth, (req, res) => {
-  // Return the list of chapters
-  const chapters = ['Chapter 1', 'Chapter 2', 'Chapter 3'];
-  res.json(chapters);
-});
-
-// Protected route - require authentication
-app.get('/api/chapters/:chapterId', requireAuth, (req, res) => {
-  const chapterId = req.params.chapterId;
-  // Return the details of the specified chapter
-  const chapter = {
-    id: chapterId,
-    title: `Chapter ${chapterId}`,
-    content: 'Chapter content goes here',
-  };
-  res.json(chapter);
-});
-
-// Protected route - require authentication
-app.get('/api/chapters/:chapterId/quiz', requireAuth, (req, res) => {
-  const chapterId = req.params.chapterId;
-  // Return the quiz for the specified chapter
-  const quiz = {
-    chapterId,
-    questions: [
-      { question: 'Question 1', choices: ['Choice 1', 'Choice 2', 'Choice 3'] },
-      { question: 'Question 2', choices: ['Choice 1', 'Choice 2', 'Choice 3'] },
-    ],
-  };
-  res.json(quiz);
-});
-

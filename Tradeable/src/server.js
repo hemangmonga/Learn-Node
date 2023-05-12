@@ -17,7 +17,6 @@ app.use('/chapter', chapterRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, './templates/login.html'));
-  
 })
 
 // Connect to MongoDB
